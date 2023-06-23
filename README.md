@@ -1,13 +1,9 @@
 # Mobile Phone Distribution For Reseller
 # Status : Still Developing process
 # Project Description
-Heading level 1
-===============
-. Code First Approach using Entity Framework
-Heading level 1
-===============
-. Identity for authentication and authorization
-Heading level 1
-===============
-. Implemented Mail Services through Dependency injection
+Code First Approach using Entity Framework. Using Identity Library for authentication and authorization. Implement Mail Service with Dependency Injection
+
+Apply Razor page and store in Areas folder
+
+Apply paging in list all user 
 
