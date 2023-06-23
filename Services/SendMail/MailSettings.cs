@@ -2,7 +2,7 @@
 using System.Net.Mail;
 using System.Net;
 
-namespace WebApplication_Slicone_Supplier.Services
+namespace WebApplication_Slicone_Supplier.Services.SendMail
 {
     public class MailSettings
     {

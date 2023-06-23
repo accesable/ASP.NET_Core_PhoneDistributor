@@ -21,9 +21,14 @@ namespace WebApplication_Slicone_Supplier.Models
                     item.SetTableName("Slicone"+TableName.Substring(6));
                 }
             }
-        }
 
-        public DbSet<PhoneModel> Phones { get; set; }
+        }
         public DbSet<Brand> Brands { get; set; }
+
+        public DbSet<Iventory> Inventories { get; set; }
+        public DbSet<PhoneModel> PhoneModels { get; set; }
+        public DbSet<IventoryDetail> IventoryDetails { get; set; }
+        public DbSet<ImportedReceipt> ImportedReceipts { get; set; }
+        public DbSet<ReceiptDetail> ReceiptDetails { get; set; }
     }
 }

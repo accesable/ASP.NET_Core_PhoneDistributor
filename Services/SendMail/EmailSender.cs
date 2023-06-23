@@ -1,11 +1,10 @@
 ﻿using Microsoft.Extensions.Options;
-using SendGrid.Helpers.Mail;
-using SendGrid;
+
 using Microsoft.AspNetCore.Identity.UI.Services;
 using MailKit.Security;
 using MimeKit;
 
-namespace WebApplication_Slicone_Supplier.Services;
+namespace WebApplication_Slicone_Supplier.Services.SendMail;
 
 public class EmailSender : IEmailSender
 {
@@ -46,7 +45,7 @@ public class EmailSender : IEmailSender
         catch (Exception ex)
         {
             // Gửi mail thất bại, nội dung email sẽ lưu vào thư mục mailssave
-            System.IO.Directory.CreateDirectory("mailssave");
+            Directory.CreateDirectory("mailssave");
             var emailsavefile = string.Format(@"mailssave/{0}.eml", Guid.NewGuid());
             await message.WriteToAsync(emailsavefile);
 

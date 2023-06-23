@@ -1,0 +1,84 @@
+﻿@model IEnumerable<WebApplication_Slicone_Supplier.Models.PhoneModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Our Phone Products</h1>
+
+<p>
+    <a class="btn btn-lg btn-primary" asp-action="Create">Add New Phone Product</a>
+</p>
+@*<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ModelName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ModelBrand)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AgentPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CustomerPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModelName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ModelBrand.BrandName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AgentPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CustomerPrice)
+            </td>
+            <td>
+                    <img src="@("~/images/"+item.Image)" asp-append-version="true" width="50px" height="50px"/>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ModelId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ModelId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ModelId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>*@
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-3 m-2">
+            <div class="card ">
+                <img src="@("~/images/PhoneModels/"+item.Image)" asp-append-version="true" width="200px" height="250px" class="card-img-top" />
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.ModelName)</h5>
+                    <div>@Html.DisplayFor(modelItem => item.ModelBrand.BrandName)</div>
+                    <p class="card-text">
+                        <strong style="color:crimson">@Html.DisplayFor(modelItem => item.CustomerPrice)$</strong>
+                    </p>
+
+                    <a asp-action="Edit" asp-route-id="@item.ModelId" class="btn btn-sm btn-secondary">Edit</a> 
+                    <a asp-action="Details" asp-route-id="@item.ModelId" class="btn btn-sm btn-info">Details</a> 
+                    <a asp-action="Delete" asp-route-id="@item.ModelId" class="btn btn-sm btn-danger">Delete</a>
+                </div>
+            </div>
+
+        </div>
+    }
+    
+
+</div>

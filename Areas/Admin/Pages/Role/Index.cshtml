@@ -1,0 +1,33 @@
+﻿@page
+@model WebApplication_Slicone_Supplier.Areas.Admin.Pages.Role.IndexModel
+@{
+    ViewData["Title"] = "Role Manager";
+}
+<partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
+
+<h2>All Roles</h2>
+<a class="btn btn-sm btn-secondary" asp-area="Admin" asp-page="Create" >Create New Role</a>
+<a class="btn btn-sm btn-secondary" asp-page="../User/Index">Manage User</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Role Name</th>
+            <th>Accessibility</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var role in Model.Roles)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td></td>
+                <td>
+                    <a class="btn btn-sm btn-success" asp-area="Admin" asp-page="Edit" asp-route-roleid="@role.Id">Edit </a>
+                    <a class="btn btn-sm btn-success" asp-area="Admin" asp-page="Delete" asp-route-roleid="@role.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    
+</table>

@@ -1,0 +1,47 @@
+﻿@page
+@model WebApplication_Slicone_Supplier.Areas.Admin.Pages.User.IndexModel
+@{
+    ViewData["Title"] = "User Manager";
+
+}
+<partial name="_StatusMessage" model="@Model.StatusMessage"></partial>
+
+<h2>All Roles</h2>
+<a class="btn btn-sm btn-secondary" asp-area="Admin" asp-page="Create" >Create New Role</a>
+<table class="table">
+    <thead>
+        <tr>
+            
+            <th>User</th>
+            <th>Role</th>
+            <th>Accessibility</th>
+           
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model.Users2)
+        {
+            <tr>
+                <td>@user.UserName</td>
+                <td>
+                    @if(string.IsNullOrEmpty(user.RoleNames))
+                    {
+                        <a class="text-dark" asp-page="./AssignRole" asp-route-id="@user.Id">Assign Role</a>
+                    }else{
+                        <a class="" asp-page="./AssignRole" asp-route-id="@user.Id">@user.RoleNames</a>
+                    }  
+                </td>
+                
+                <td>
+                    <a class="btn btn-sm btn-success" asp-page="./SetPassword" asp-route-id="@user.Id">Set User Password</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+    
+</table>
+
+<partial name="_Paging" model="@Model.PagingPage" />
+
+

@@ -1,41 +1,40 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using WebApplication_Slicone_Supplier.Models;
 using WebApplication_Slicone_Supplier.Services;
+using WebApplication_Slicone_Supplier.Services.GenerateID;
+using WebApplication_Slicone_Supplier.Services.SendMail;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddControllersWithViews();
+builder.Services.AddSession();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options=>options.UseSqlServer(builder.Configuration.GetConnectionString("MyConn")));
 
+// Add Self-Build Services
 builder.Services.AddOptions();
+
+//Add Mail Settings
 var mailsettings = builder.Configuration.GetSection("MailSettings");
 builder.Services.Configure<MailSettings>(mailsettings);
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+//Add Self-Generate ID services
+builder.Services.AddTransient<IIdGeneratorService, IdGeneratorService>();
+builder.Services.AddTransient<IFileUploadServices, FileUploadServices>();
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.AccessDeniedPath = "/Identity/Account/AccessDenied";
-    options.Cookie.Name = "YourAppCookieName";
-    options.Cookie.HttpOnly = true;
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
-    options.LoginPath = "/Identity/Account/Login";
-    // ReturnUrlParameter requires 
-    //using Microsoft.AspNetCore.Authentication.Cookies;
-    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
-    options.SlidingExpiration = true;
-});
+//Add Self Identity-Role Error services
+builder.Services.AddSingleton<IdentityErrorDescriber,MyAppIdentityErrorDescriber>();
 
-/*builder.Services.AddDefaultIdentity<WebUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
-*/builder.Services.AddIdentity<WebUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Default Lockout settings.
@@ -64,6 +63,26 @@ builder.Services.Configure<IdentityOptions>(options =>
 /*builder.Services.AddIdentity<WebUser,IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();*/
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+
+    options.LoginPath = $"/Login";
+    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+    /*options.Cookie.Name = ".AspNetCore.Identity.Application";*/
+    /*options.Cookie.HttpOnly = true;*/
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+    options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+    options.SlidingExpiration = true;
+});
+
+/*builder.Services.AddDefaultIdentity<WebUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+*/
+builder.Services.AddIdentity<WebUser,IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -77,13 +96,23 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+/*app.UseStaticFiles( new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "MyStaticFiles")),
+    RequestPath = "/StaticFiles"
+});*/
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapRazorPages();
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.MapRazorPages();
+
+
 app.Run();

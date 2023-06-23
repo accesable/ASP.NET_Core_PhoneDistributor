@@ -173,6 +173,68 @@ namespace WebApplication_Slicone_Supplier.Migrations
                     b.ToTable("Brands");
                 });
 
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.ImportedReceipt", b =>
+                {
+                    b.Property<string>("ReceiptId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ReceiptDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StaffId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("StaffName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ReceiptId");
+
+                    b.HasIndex("StaffId");
+
+                    b.ToTable("ImportedReceipts");
+                });
+
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.Iventory", b =>
+                {
+                    b.Property<string>("IventoryID")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IventoryAddress")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("IventoryID");
+
+                    b.ToTable("Inventories");
+                });
+
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.IventoryDetail", b =>
+                {
+                    b.Property<string>("IventoryDetailId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("IventoryID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("PhoneModelModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("IventoryDetailId");
+
+                    b.HasIndex("IventoryID");
+
+                    b.HasIndex("PhoneModelModelId");
+
+                    b.ToTable("IventoryDetails");
+                });
+
             modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.PhoneModel", b =>
                 {
                     b.Property<int>("ModelId")
@@ -184,9 +246,6 @@ namespace WebApplication_Slicone_Supplier.Migrations
                     b.Property<double>("AgentPrice")
                         .HasColumnType("float");
 
-                    b.Property<int?>("BrandId")
-                        .HasColumnType("int");
-
                     b.Property<double>("CustomerPrice")
                         .HasColumnType("float");
 
@@ -195,9 +254,8 @@ namespace WebApplication_Slicone_Supplier.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)");
 
-                    b.Property<string>("ModelBrand")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ModelBrandId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ModelName")
                         .IsRequired()
@@ -206,9 +264,35 @@ namespace WebApplication_Slicone_Supplier.Migrations
 
                     b.HasKey("ModelId");
 
-                    b.HasIndex("BrandId");
+                    b.HasIndex("ModelBrandId");
 
-                    b.ToTable("Phones");
+                    b.ToTable("PhoneModels");
+                });
+
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.ReceiptDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImportedReceiptReceiptId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("PhoneModelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImportedReceiptReceiptId");
+
+                    b.HasIndex("PhoneModelId");
+
+                    b.ToTable("ReceiptDetails");
                 });
 
             modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.WebUser", b =>
@@ -233,6 +317,16 @@ namespace WebApplication_Slicone_Supplier.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -331,13 +425,68 @@ namespace WebApplication_Slicone_Supplier.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.ImportedReceipt", b =>
+                {
+                    b.HasOne("WebApplication_Slicone_Supplier.Models.WebUser", "Staff")
+                        .WithMany()
+                        .HasForeignKey("StaffId");
+
+                    b.Navigation("Staff");
+                });
+
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.IventoryDetail", b =>
+                {
+                    b.HasOne("WebApplication_Slicone_Supplier.Models.Iventory", "Iventory")
+                        .WithMany("IventoryDetails")
+                        .HasForeignKey("IventoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication_Slicone_Supplier.Models.PhoneModel", "PhoneModel")
+                        .WithMany()
+                        .HasForeignKey("PhoneModelModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Iventory");
+
+                    b.Navigation("PhoneModel");
+                });
+
             modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.PhoneModel", b =>
                 {
-                    b.HasOne("WebApplication_Slicone_Supplier.Models.Brand", "Brand")
+                    b.HasOne("WebApplication_Slicone_Supplier.Models.Brand", "ModelBrand")
                         .WithMany()
-                        .HasForeignKey("BrandId");
+                        .HasForeignKey("ModelBrandId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Brand");
+                    b.Navigation("ModelBrand");
+                });
+
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.ReceiptDetail", b =>
+                {
+                    b.HasOne("WebApplication_Slicone_Supplier.Models.ImportedReceipt", null)
+                        .WithMany("ReceiptDetails")
+                        .HasForeignKey("ImportedReceiptReceiptId");
+
+                    b.HasOne("WebApplication_Slicone_Supplier.Models.PhoneModel", "Phone")
+                        .WithMany()
+                        .HasForeignKey("PhoneModelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Phone");
+                });
+
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.ImportedReceipt", b =>
+                {
+                    b.Navigation("ReceiptDetails");
+                });
+
+            modelBuilder.Entity("WebApplication_Slicone_Supplier.Models.Iventory", b =>
+                {
+                    b.Navigation("IventoryDetails");
                 });
 #pragma warning restore 612, 618
         }
